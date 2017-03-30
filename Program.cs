@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace MarkdownVariation
@@ -101,6 +100,10 @@ namespace MarkdownVariation
             {
                 Compare((JObject)oldToken, (JObject)newToken);
             }
+            else if (oldToken.Type == JTokenType.String && newToken.Type == JTokenType.String)
+            {
+                Compare(oldToken.ToString(), newToken.ToString());
+            }
             else
             {
                 throw new NotSameValueException();
@@ -125,7 +128,6 @@ namespace MarkdownVariation
                     {
                         throw new NotSameException("Token is different.", oldArray[i], newArray[i]);
                     }
-                    throw new NotSameException("Token is different.", oldArray[i], newArray[i]);
                 }
             }
             if (newArray.Count > oldArray.Count)
@@ -144,6 +146,14 @@ namespace MarkdownVariation
                 {
                     Compare(oldObject[key], newObject[key]);
                 }
+            }
+        }
+
+        private static void Compare(string oldText, string newText)
+        {
+            if (oldText.TrimEnd('\n') != newText.TrimEnd('\n'))
+            {
+                throw new NotSameValueException();
             }
         }
 
